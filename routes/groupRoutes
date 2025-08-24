@@ -1,0 +1,29 @@
+// routes/groupRoutes.js
+
+const express = require('express');
+const { 
+  createGroup, 
+  getMyGroups, 
+  addMemberToGroup,
+  setGroupBackground,
+  removeMemberFromGroup,
+  deleteGroup
+} = require('../controllers/groupController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+// Multer setup for file uploads
+const multer = require('multer');
+const storage = multer.memoryStorage(); // <- यहां memoryStorage का उपयोग करें
+const upload = multer({ storage: storage });
+
+router.post('/create', protect, createGroup);
+router.get('/my', protect, getMyGroups);
+router.post('/:id/add-member', protect, addMemberToGroup);
+
+// NEW ROUTE: Set a group's background image
+router.post('/:id/set-background', protect, upload.single('groupImage'), setGroupBackground);
+router.post('/:id/remove-member', protect, removeMemberFromGroup);
+router.delete('/:id', protect, deleteGroup);
+module.exports = router;
